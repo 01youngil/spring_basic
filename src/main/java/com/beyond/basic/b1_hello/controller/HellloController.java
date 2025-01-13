@@ -230,7 +230,6 @@ public class HellloController {
 //        RequestPart로 받을때
         System.out.println(hello);
         System.out.println(photo.getOriginalFilename());
-7
         return "OK";
     }
 }
