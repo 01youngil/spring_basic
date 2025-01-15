@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="en" xmlns:th = "http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>회원목록조회</title>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>회원 목록 조회</title>
 </head>
 <body>
-  <div th:replace="member/header :: headerFragment"></div>
+  <div th:replace ="member/header :: headerFragment"></div>
 
   <table>
     <thead>
@@ -18,11 +18,15 @@
         <th>이메일</th>
       </tr>
     </thead>
+
     <tbody>
+      <!--    tr이 하나의 for문이라고 생각하기-->
       <tr th:each = "member : ${memberList}">
-        <td th:text = "${member.id}"></td>
-        <td th:text = "${member.name}"></td>
-        <td th:text = "${member.email}"></td>
+        <td th:text = ${member.id}></td>
+        <td th:text = ${member.name}></td>
+        <td th:text = ${member.email}></td>
+        <!--          클릭하면 24줄에 있는 id를 쓰겠다!-->
+        <td><a th:href="@{/member/detail/{id}(id=${member.id})}">상세조회</a></td>
       </tr>
     </tbody>
   </table>
