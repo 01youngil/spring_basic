@@ -79,7 +79,7 @@ public class MemberController {
         try {
             memberService.save(memberCreateDto);
 //        새로운 화면 리턴이 아닌 url 재호출을 통해 redirect
-            return "redirect://member/list";
+            return "redirect:/member/list";
         }catch (IllegalArgumentException e){
             model.addAttribute("errorMessage", e.getMessage());
             return "/member/member-error";
