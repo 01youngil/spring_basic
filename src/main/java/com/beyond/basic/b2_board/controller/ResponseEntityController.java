@@ -35,7 +35,7 @@ public class ResponseEntityController {
 //    case3. ResponseEntity 객체를 직접 생성하여 custom하는 방식
     @GetMapping("/custom1")
 //    Object자리에 Member, ?도 가능
-    public ResponseEntity<Object> custom1(){
+        public ResponseEntity<Object> custom1(){
         Member member = new Member("hongildong", "hong111@naver.com", "12341234");
         return new ResponseEntity<>(member,HttpStatus.CREATED);
     }

@@ -14,6 +14,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+//controller + responsebody(모든메서드에)
 @RestController
 @RequestMapping("/member/rest")
 public class MemberRestController {
@@ -23,7 +24,6 @@ public class MemberRestController {
         this.memberService = memberService;
     }
 
-    //    회원목록조회
     @GetMapping("/list")
     public ResponseEntity<?> memberlist(){
         List<MemberListRes> memberListResList = memberService.findAll();
@@ -33,47 +33,28 @@ public class MemberRestController {
     //    회원상세조회
     @GetMapping("/detail/{id}")
     public ResponseEntity<?> memberDetail(@PathVariable Long id){
-        try {
-            MemberDetailDto dto = memberService.findById(id);
-            return new ResponseEntity<>(new CommonDto(HttpStatus.OK.value(),"member is found",dto),HttpStatus.OK);
-        }catch (EntityNotFoundException e){
-            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.NOT_FOUND.value(), e.getMessage()),HttpStatus.NOT_FOUND);
-        }
+        MemberDetailDto dto = memberService.findById(id);
+        return new ResponseEntity<>(new CommonDto(HttpStatus.OK.value(),"member is found",dto),HttpStatus.OK);
     }
 
     //    회원가입
     @PostMapping("/create")
     public ResponseEntity<?> memberCreatePost(@RequestBody MemberCreateDto memberCreateDto){
-            try {
-                Member member = memberService.save2(memberCreateDto);
-                return new ResponseEntity<>(new CommonDto(HttpStatus.CREATED.value(), "member is created",member.getId()), HttpStatus.CREATED);
-            }catch (IllegalArgumentException e){
-                return new ResponseEntity<>(new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage()),HttpStatus.BAD_REQUEST);
-
-            }
+        Member member = memberService.save2(memberCreateDto);
+        return new ResponseEntity<>(new CommonDto(HttpStatus.CREATED.value(), "member is created",member.getId()), HttpStatus.CREATED);
     }
 
 //    get : 조회, post : 등록, patch : 부분수정, put : 대체, delete : 삭제
 //    axios.patch
     @PatchMapping("/update/pw")
     public ResponseEntity<?> memberUpdatePw(@RequestBody MemberUpdateDto memberUpdateDto){
-        try {
-            memberService.updatePw(memberUpdateDto);
-            return new ResponseEntity<>(new CommonDto(HttpStatus.OK.value(), "member is updated",memberUpdateDto), HttpStatus.OK);
-        }catch (EntityNotFoundException e){
-            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.NOT_FOUND.value(), e.getMessage()),HttpStatus.NOT_FOUND);
-        }
-
+        memberService.updatePw(memberUpdateDto);
+        return new ResponseEntity<>(new CommonDto(HttpStatus.OK.value(), "member is updated",memberUpdateDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteMember(@PathVariable Long id){
-        try {
-            memberService.delete(id);
-            return new ResponseEntity<>(new CommonDto(HttpStatus.OK.value(), "member is deleted",id), HttpStatus.OK);
-        }catch (EntityNotFoundException e){
-            return new ResponseEntity<>(new CommonErrorDto(HttpStatus.NOT_FOUND.value(), e.getMessage()),HttpStatus.NOT_FOUND);
-        }
-
+        memberService.delete(id);
+        return new ResponseEntity<>(new CommonDto(HttpStatus.OK.value(), "member is deleted",id), HttpStatus.OK);
     }
 }

@@ -2,10 +2,9 @@ package com.beyond.basic.b2_board.domain;
 
 import com.beyond.basic.b2_board.dtos.MemberDetailDto;
 import com.beyond.basic.b2_board.dtos.MemberListRes;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.beyond.basic.b2_board.dtos.PostDetailDto;
+import com.beyond.basic.b2_board.dtos.PostListRes;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,41 +13,33 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
-@ToString //디버깅용
-//JPA의 엔티티매니저에게 객체를 위임하려면 @Entity어노테이션 필요
+@ToString
 @Entity
-public class Member {
-    @Id //pk설정
-//    IDENTITY : auto_increment설정(AUTO설정은 jpa에게 적절한 전략을 위임하는것)
+@AllArgsConstructor
+//Builder 어노테이션을 사용하여, 빌더패턴으로 엔티티의 생성자를 구성
+//빌더패턴의 장점 : 매개변수의 순서와 개수를 유연하게 세팅할 수 있다.
+@Builder
+public class Post extends BaseTimeEntity{
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    String은 별다른 설정없을경우 varchar(255)로 DB컬럼으로 설정. 변수명==컬럼명으로 변환.
-    private String name;
-    @Column(length = 50, unique = true, nullable = false)
-    private String email;
-//    @Column(name = "pw") 이렇게 할수는 있으나, 되도록이면 컬럼명과 변수명을 일치시키는것이 개발의 혼선줄임.
-    private String password;
+    @Column(nullable = false)
+    private String title;
+    private String contents;
+//    LAZY로 설정시 member객체를 사용하지 않는한, member테이블로 쿼리발생하지 않음.
+//    이에 반해 EAGER(즉시로딩)타입으로 설정시 사용하지 않아도 member테이블로 쿼리 발생.
+    @ManyToOne(fetch = FetchType.LAZY) //ManyToOne에서는 EAGER로 default돼있음.
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-//    java에서 캐멀케이스 사용시 db에는 created_time으로 컬럼변환.
-    @CreationTimestamp
-    private LocalDateTime createdTime;
-    @UpdateTimestamp
-    private LocalDateTime updateTime;
 
-    public Member(String name, String email, String password){
-        this.name = name;
-        this.email = email;
-        this.password = password;
+    public PostListRes listFromEntity(){
+//        return new PostListRes(this.id, this.title);
+        return PostListRes.builder().id(this.id).title(this.title).build();
     }
-
-    public void updatePw(String newPassword){
-        this.password = newPassword;
-    }
-
-    public MemberListRes listFromEntity(){
-        return new MemberListRes(this.id, this.name, this.email);
-    }
-    public MemberDetailDto detailFromEntity(){
-        return new MemberDetailDto(this.name, this.email, this.password);
+    public PostDetailDto detailFromEntity(String email){
+//        return new PostDetailDto(this.id, this.title, this.contents);
+        return PostDetailDto.builder().id(this.id).title(this.title).contents(this.contents)
+                .memberEmail(email).build();
     }
 }
